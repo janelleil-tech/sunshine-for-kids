@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find the Hidden Stars | Sunshine for Kids</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    .find-game {
+      max-width: 700px;
+      margin: 25px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .picture {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      margin: 20px auto;
+      background: #eef7ff;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 2px solid #ddd;
+    }
+
+    .hidden-star {
+      position: absolute;
+      font-size: 28px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+
+    .hidden-star:hover {
+      transform: scale(1.2);
+    }
+
+    .found {
+      opacity: 0.25;
+      transform: scale(1.3);
+    }
+
+    #message {
+      font-weight: bold;
+      margin: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="category-page">
+
+    <a class="back" href="../category-find.html">← Back to Find</a>
+
+    <h1>🔎 Find the Hidden Stars!</h1>
+
+    <p class="tagline">
+      Look carefully! Can you find all 5 hidden stars?
+    </p>
+
+    <div class="find-game">
+
+      <div class="picture">
+
+        <div class="hidden-star" style="top: 12%; left: 10%;" onclick="findStar(this)">⭐</div>
+
+        <div class="hidden-star" style="top: 65%; left: 25%;" onclick="findStar(this)">⭐</div>
+
+        <div class="hidden-star" style="top: 25%; left: 70%;" onclick="findStar(this)">⭐</div>
+
+        <div class="hidden-star" style="top: 75%; left: 80%;" onclick="findStar(this)">⭐</div>
+
+        <div class="hidden-star" style="top: 45%; left: 50%;" onclick="findStar(this)">⭐</div>
+
+      </div>
+
+      <p id="message">Stars found: 0 / 5 ⭐</p>
+
+      <button onclick="resetGame()">Start Over</button>
+
+    </div>
+
+  </main>
+
+  <script>
+    let found = 0;
+
+    function findStar(star) {
+      if (star.classList.contains("found")) return;
+
+      star.classList.add("found");
+      found++;
+
+      document.getElementById("message").textContent =
+        "Stars found: " + found + " / 5 ⭐";
+
+      if (found === 5) {
+        document.getElementById("message").textContent =
+          "🎉 You found all 5 stars! Great job!";
+      }
+    }
+
+    function resetGame() {
+      found = 0;
+
+      document.getElementById("message").textContent =
+        "Stars found: 0 / 5 ⭐";
+
+      document.querySelectorAll(".hidden-star").forEach(function(star) {
+        star.classList.remove("found");
+      });
+    }
+  </script>
+
+</body>
+</html>
