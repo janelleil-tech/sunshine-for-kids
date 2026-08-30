@@ -8,11 +8,9 @@
 
   <style>
     .drawing-box {
+      width: 100%;
       max-width: 850px;
-      margin: 25px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 20px;
+      margin: 20px auto;
       text-align: center;
     }
 
@@ -20,30 +18,16 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
       gap: 8px;
       margin: 15px 0;
     }
 
-    .color {
+    .color-button {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       border: 2px solid #555;
       cursor: pointer;
-      padding: 0;
-    }
-
-    #drawingCanvas {
-      display: block;
-      width: 100%;
-      max-width: 800px;
-      height: auto;
-      margin: 0 auto;
-      border: 2px solid #ccc;
-      border-radius: 15px;
-      background: white;
-      touch-action: none;
     }
 
     .tool-button {
@@ -52,6 +36,18 @@
       border-radius: 10px;
       cursor: pointer;
       font-size: 15px;
+    }
+
+    #drawingCanvas {
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: 0 auto;
+      border: 2px solid #ccc;
+      border-radius: 15px;
+      background: white;
+      touch-action: none;
     }
   </style>
 </head>
@@ -72,41 +68,21 @@
 
       <div class="tools">
 
-        <button class="color" style="background:#ff5c5c;"
-          onclick="chooseColor('#ff5c5c')"></button>
-
-        <button class="color" style="background:#ffb347;"
-          onclick="chooseColor('#ffb347')"></button>
-
-        <button class="color" style="background:#ffe066;"
-          onclick="chooseColor('#ffe066')"></button>
-
-        <button class="color" style="background:#77dd77;"
-          onclick="chooseColor('#77dd77')"></button>
-
-        <button class="color" style="background:#66b3ff;"
-          onclick="chooseColor('#66b3ff')"></button>
-
-        <button class="color" style="background:#b19cd9;"
-          onclick="chooseColor('#b19cd9')"></button>
-
-        <button class="color" style="background:#ff9ed2;"
-          onclick="chooseColor('#ff9ed2')"></button>
-
-        <button class="color" style="background:#333;"
-          onclick="chooseColor('#333')"></button>
+        <button class="color-button" style="background:#ff5c5c" onclick="chooseColor('#ff5c5c')"></button>
+        <button class="color-button" style="background:#ffb347" onclick="chooseColor('#ffb347')"></button>
+        <button class="color-button" style="background:#ffe066" onclick="chooseColor('#ffe066')"></button>
+        <button class="color-button" style="background:#77dd77" onclick="chooseColor('#77dd77')"></button>
+        <button class="color-button" style="background:#66b3ff" onclick="chooseColor('#66b3ff')"></button>
+        <button class="color-button" style="background:#b19cd9" onclick="chooseColor('#b19cd9')"></button>
+        <button class="color-button" style="background:#ff9ed2" onclick="chooseColor('#ff9ed2')"></button>
+        <button class="color-button" style="background:#333" onclick="chooseColor('#333')"></button>
 
         <button class="tool-button" onclick="chooseEraser()">🧽 Eraser</button>
-
         <button class="tool-button" onclick="clearCanvas()">🗑️ Clear</button>
 
       </div>
 
-      <canvas
-        id="drawingCanvas"
-        width="800"
-        height="500">
-      </canvas>
+      <canvas id="drawingCanvas" width="800" height="500"></canvas>
 
     </div>
 
@@ -123,26 +99,14 @@
     function getPosition(event) {
       const rect = canvas.getBoundingClientRect();
 
-      let clientX;
-      let clientY;
-
-      if (event.touches && event.touches.length > 0) {
-        clientX = event.touches[0].clientX;
-        clientY = event.touches[0].clientY;
-      } else {
-        clientX = event.clientX;
-        clientY = event.clientY;
-      }
-
       return {
-        x: (clientX - rect.left) * (canvas.width / rect.width),
-        y: (clientY - rect.top) * (canvas.height / rect.height)
+        x: (event.clientX - rect.left) * (canvas.width / rect.width),
+        y: (event.clientY - rect.top) * (canvas.height / rect.height)
       };
     }
 
     function startDrawing(event) {
       event.preventDefault();
-
       drawing = true;
 
       const position = getPosition(event);
@@ -162,12 +126,10 @@
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
-      if (erasing) {
-        ctx.globalCompositeOperation = "destination-out";
-      } else {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = currentColor;
-      }
+      ctx.globalCompositeOperation =
+        erasing ? "destination-out" : "source-over";
+
+      ctx.strokeStyle = currentColor;
 
       ctx.lineTo(position.x, position.y);
       ctx.stroke();
@@ -192,20 +154,11 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("mouseup", stopDrawing);
-    canvas.addEventListener("mouseleave", stopDrawing);
-
-    canvas.addEventListener("touchstart", startDrawing, {
-      passive: false
-    });
-
-    canvas.addEventListener("touchmove", draw, {
-      passive: false
-    });
-
-    canvas.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("pointerdown", startDrawing);
+    canvas.addEventListener("pointermove", draw);
+    canvas.addEventListener("pointerup", stopDrawing);
+    canvas.addEventListener("pointercancel", stopDrawing);
+    canvas.addEventListener("pointerleave", stopDrawing);
   </script>
 
 </body>
