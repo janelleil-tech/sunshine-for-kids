@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help the Bunny Find Home | Sunshine for Kids</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    .maze-box {
+      max-width: 600px;
+      margin: 25px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      max-width: 420px;
+      margin: 20px auto;
+      touch-action: none;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(18px, 5vw, 32px);
+    }
+
+    .wall {
+      background: #555;
+    }
+
+    .path {
+      background: #f8f8f8;
+    }
+
+    .start {
+      background: #dff5df;
+    }
+
+    .finish {
+      background: #fff0b8;
+    }
+
+    #message {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="category-page">
+    <a class="back" href="../category-mazes.html">← Back to Mazes</a>
+
+    <h1>🐰 Help the Bunny Find Home!</h1>
+    <p class="tagline">Use the arrow buttons to guide the bunny to the house.</p>
+
+    <div class="maze-box">
+
+      <div id="maze" class="maze"></div>
+
+      <div>
+        <button onclick="move('up')">⬆️</button>
+      </div>
+
+      <div>
+        <button onclick="move('left')">⬅️</button>
+        <button onclick="move('down')">⬇️</button>
+        <button onclick="move('right')">➡️</button>
+      </div>
+
+      <p id="message">Help the bunny get home! 🐰</p>
+
+      <button onclick="resetMaze()">Restart</button>
+
+    </div>
+  </main>
+
+  <script>
+    const mazeLayout = [
+      [1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,1],
+      [1,0,1,0,1,0,1],
+      [1,0,1,0,0,0,1],
+      [1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1]
+    ];
+
+    let bunny = { row: 1, col: 1 };
+    const finish = { row: 5, col: 5 };
+
+    function drawMaze() {
+      const maze = document.getElementById("maze");
+      maze.innerHTML = "";
+
+      for (let row = 0; row < mazeLayout.length; row++) {
+        for (let col = 0; col < mazeLayout[row].length; col++) {
+
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          if (mazeLayout[row][col] === 1) {
+            cell.classList.add("wall");
+          } else {
+            cell.classList.add("path");
+
+            if (row === bunny.row && col === bunny.col) {
+              cell.textContent = "🐰";
+              cell.classList.add("start");
+            }
+
+            if (row === finish.row && col === finish.col) {
+              cell.textContent = "🏠";
+              cell.classList.add("finish");
+            }
+          }
+
+          maze.appendChild(cell);
+        }
+      }
+    }
+
+    function move(direction) {
+      let newRow = bunny.row;
+      let newCol = bunny.col;
+
+      if (direction === "up") newRow--;
+      if (direction === "down") newRow++;
+      if (direction === "left") newCol--;
+      if (direction === "right") newCol++;
+
+      if (
+        mazeLayout[newRow] &&
+        mazeLayout[newRow][newCol] === 0
+      ) {
+        bunny.row = newRow;
+        bunny.col = newCol;
+
+        if (bunny.row === finish.row && bunny.col === finish.col) {
+          document.getElementById("message").textContent =
+            "🎉 You helped the bunny get home!";
+        }
+      }
+
+      drawMaze();
+    }
+
+    function resetMaze() {
+      bunny = { row: 1, col: 1 };
+      document.getElementById("message").textContent =
+        "Help the bunny get home! 🐰";
+      drawMaze();
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowUp") move("up");
+      if (event.key === "ArrowDown") move("down");
+      if (event.key === "ArrowLeft") move("left");
+      if (event.key === "ArrowRight") move("right");
+    });
+
+    drawMaze();
+  </script>
+
+</body>
+</html>
