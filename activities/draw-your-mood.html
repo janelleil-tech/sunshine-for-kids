@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draw Your Mood | Sunshine for Kids</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <main class="category-page">
+    <a class="back" href="../category-create.html">← Back</a>
+
+    <h1>Draw Your Mood Today! 🎨</h1>
+    <p class="tagline">Draw anything that shows how you're feeling!</p>
+
+    <canvas
+      id="drawingCanvas"
+      width="800"
+      height="500"
+      style="border: 2px solid #333; background: white; max-width: 100%;"
+    ></canvas>
+
+    <div style="margin-top: 15px;">
+      <button onclick="clearCanvas()">Clear</button>
+    </div>
+  </main>
+
+  <script src="../drawing.js"></script>
+
+</body>
+</html>
