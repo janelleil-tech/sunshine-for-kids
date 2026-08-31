@@ -3,28 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mazes | Sunshine for Kids</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="category-page">
-    <a class="back" href="index.html">← Back home</a>
-    <h1>🌀 Mazes</h1>
-    <p class="tagline">Can you help them find their way?</p>
+  <title>Help Bunny Find Home | Sunshine for Kids</title>
+  <link rel="stylesheet" href="../style.css">
 
-    <section class="activity-grid">
-      <a class="activity-card" href="activities/bunny-maze.html">
-        <div class="activity-icon">🐰</div>
-        <h2>Help the Bunny Find Home</h2>
-        <p>Trace the path and help the bunny make it home.</p>
-        <span class="start">Start →</span>
-      </a>
-      <div class="coming-soon">
-        <div>☀️</div>
-        <h2>More activities coming soon!</h2>
-        <p>New pages will be added here as Sunshine for Kids grows.</p>
+  <style>
+    .maze-page {
+      text-align: center;
+    }
+
+    .maze-page h1 {
+      font-family: "Patrick Hand", cursive;
+      color: var(--orange);
+      font-size: clamp(2.5rem, 7vw, 4.2rem);
+      margin-bottom: 4px;
+    }
+
+    .maze-page .instructions {
+      font-size: 1.15rem;
+      margin-bottom: 18px;
+    }
+
+    .maze-info {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .carrot-count,
+    .maze-message {
+      background: white;
+      border-radius: 18px;
+      padding: 10px 18px;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+    }
+
+    .maze-wrapper {
+      position: relative;
+      width: min(760px, 94vw);
+      margin: 0 auto;
+      padding: 18px;
+      background: #FFFDF5;
+      border: 4px solid #FFD96A;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .maze-board {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 15 / 11;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(255, 217, 106, .28) 0 10px, transparent 11px),
+        radial-gradient(circle at 85% 80%, rgba(246, 181, 181, .28) 0 12px, transparent 13px),
+        #FFF9EC;
+      border: 3px solid #F0D8B8;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .wall {
+      position: absolute;
+      background: #F49A6A;
+      border-radius: 7px;
+      box-shadow: inset 0 -3px 0 rgba(91, 58, 50, .12);
+    }
+
+    .carrot,
+    .bunny,
+    .home {
+      position: absolute;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      width: 7%;
+      height: 9%;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .bunny {
+      z-index: 10;
+      transition: left .08s linear, top .08s linear;
+    }
+
+    .home {
+      font-size: clamp(1.3rem, 4vw, 2.2rem);
+    }
+
+    .carrot.collected {
+      opacity: .25;
+      transform: scale(.8);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      grid-template-rows: repeat(2, 58px);
+      justify-content: center;
+      gap: 7px;
+      margin: 20px auto 10px;
+    }
+
+    .controls button {
+      border: 2px solid #E8C89A;
+      border-radius: 16px;
+      background: white;
+      font-size: 1.7rem;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #E8C89A;
+      touch-action: manipulation;
+    }
+
+    .controls button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #E8C89A;
+    }
+
+    .up {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .left {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .down {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .right {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    .maze-note {
+      font-size: .95rem;
+      color: #8B7169;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .maze-wrapper {
+        padding: 10px;
+      }
+
+      .controls {
+        grid-template-columns: repeat(3, 52px);
+        grid-template-rows: repeat(2, 52px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="activity-page maze-page">
+
+    <a class="back" href="../category-mazes.html">← Back to Mazes</a>
+
+    <h1>🐰 Help Bunny Find Home!</h1>
+
+    <p class="instructions">
+      🥕 Collect all 5 carrots, then help Bunny find the way home!
+    </p>
+
+    <div class="maze-info">
+      <div class="carrot-count">
+        🥕 Carrots: <span id="carrotCount">0</span>/5
       </div>
-    </section>
+
+      <div class="maze-message" id="message">
+        Find all the carrots!
+      </div>
+    </div>
+
+    <div class="maze-wrapper">
+
+      <div class="maze-board" id="mazeBoard">
+
+        <!-- BUNNY -->
+        <div class="bunny" id="bunny">🐰</div>
+
+        <!-- HOME -->
+        <div class="home" style="left: 88%; top: 82%;">🏠</div>
+
+        <!-- CARROTS -->
+        <div class="carrot" data-x="18" data-y="10" style="left: 18%; top: 10%;">🥕</div>
+        <div class="carrot" data-x="48" data-y="18" style="left: 48%; top: 18%;">🥕</div>
+        <div class="carrot" data-x="76" data-y="36" style="left: 76%; top: 36%;">🥕</div>
+        <div class="carrot" data-x="34" data-y="64" style="left: 34%; top: 64%;">🥕</div>
+        <div class="carrot" data-x="68" data-y="72" style="left: 68%; top: 72%;">🥕</div>
+
+        <!-- MAZE WALLS -->
+
+        <div class="wall" style="left: 8%; top: 0%; width: 3%; height: 27%;"></div>
+        <div class="wall" style="left: 8%; top: 36%; width: 3%; height: 37%;"></div>
+
+        <div class="wall" style="left: 20%; top: 10%; width: 3%; height: 43%;"></div>
+        <div class="wall" style="left: 20%; top: 62%; width: 3%; height: 28%;"></div>
+
+        <div class="wall" style="left: 32%; top: 0%; width: 3%; height: 28%;"></div>
+        <div class="wall" style="left: 32%; top: 38%; width: 3%; height: 42%;"></div>
+
+        <div class="wall" style="left: 44%; top: 20%; width: 3%; height: 32%;"></div>
+        <div class="wall" style="left: 44%; top: 61%; width: 3%; height: 39%;"></div>
+
+        <div class="wall" style="left: 56%; top: 0%; width: 3%; height: 23%;"></div>
+        <div class="wall" style="left: 56%; top: 32%; width: 3%; height: 42%;"></div>
+
+        <div class="wall" style="left: 68%; top: 17%; width: 3%; height: 40%;"></div>
+        <div class="wall" style="left: 68%; top: 66%; width: 3%; height: 34%;"></div>
+
+        <div class="wall" style="left: 80%; top: 0%; width: 3%; height: 31%;"></div>
+        <div class="wall" style="left: 80%; top: 41%; width: 3%; height: 42%;"></div>
+
+        <!-- HORIZONTAL WALLS -->
+
+        <div class="wall" style="left: 8%; top: 27%; width: 17%; height: 3%;"></div>
+        <div class="wall" style="left: 29%; top: 27%; width: 20%; height: 3%;"></div>
+        <div class="wall" style="left: 53%; top: 23%; width: 18%; height: 3%;"></div>
+        <div class="wall" style="left: 74%; top: 31%; width: 17%; height: 3%;"></div>
+
+        <div class="wall" style="left: 11%; top: 53%; width: 14%; height: 3%;"></div>
+        <div class="wall" style="left: 28%; top: 50%; width: 19%; height: 3%;"></div>
+        <div class="wall" style="left: 50%; top: 56%; width: 18%; height: 3%;"></div>
+        <div class="wall" style="left: 71%; top: 57%; width: 18%; height: 3%;"></div>
+
+        <div class="wall" style="left: 8%; top: 80%; width: 18%; height: 3%;"></div>
+        <div class="wall" style="left: 28%; top: 78%; width: 20%; height: 3%;"></div>
+        <div class="wall" style="left: 51%; top: 82%; width: 20%; height: 3%;"></div>
+        <div class="wall" style="left: 74%; top: 83%; width: 15%; height: 3%;"></div>
+
+      </div>
+    </div>
+
+    <div class="controls" aria-label="Bunny movement controls">
+      <button class="up" data-direction="up" aria-label="Move up">⬆️</button>
+      <button class="left" data-direction="left" aria-label="Move left">⬅️</button>
+      <button class="down" data-direction="down" aria-label="Move down">⬇️</button>
+      <button class="right" data-direction="right" aria-label="Move right">➡️</button>
+    </div>
+
+    <p class="maze-note">
+      You can also use the arrow keys on a computer! 💛
+    </p>
+
   </main>
+
+  <script>
+    const bunny = document.getElementById("bunny");
+    const board = document.getElementById("mazeBoard");
+    const carrots = document.querySelectorAll(".carrot");
+    const carrotCount = document.getElementById("carrotCount");
+    const message = document.getElementById("message");
+
+    let bunnyX = 3;
+    let bunnyY = 4;
+    let collected = 0;
+
+    const step = 2.2;
+
+    function updateBunny() {
+      bunny.style.left = bunnyX + "%";
+      bunny.style.top = bunnyY + "%";
+
+      checkCarrots();
+      checkHome();
+    }
+
+    function checkCarrots() {
+      carrots.forEach(carrot => {
+        if (carrot.classList.contains("collected")) return;
+
+        const carrotX = parseFloat(carrot.dataset.x);
+        const carrotY = parseFloat(carrot.dataset.y);
+
+        const distance = Math.sqrt(
+          Math.pow(bunnyX - carrotX, 2) +
+          Math.pow(bunnyY - carrotY, 2)
+        );
+
+        if (distance < 7) {
+          carrot.classList.add("collected");
+          collected++;
+          carrotCount.textContent = collected;
+
+          if (collected < 5) {
+            message.textContent = `Yay! ${5 - collected} carrots left! 🥕`;
+          } else {
+            message.textContent = "You got them all! Now find Bunny's home! 🏠";
+          }
+        }
+      });
+    }
+
+    function checkHome() {
+      const distance = Math.sqrt(
+        Math.pow(bunnyX - 88, 2) +
+        Math.pow(bunnyY - 82, 2)
+      );
+
+      if (distance < 7 && collected === 5) {
+        message.textContent = "🎉 You did it! Bunny is home!";
+      }
+    }
+
+    function move(direction) {
+      let newX = bunnyX;
+      let newY = bunnyY;
+
+      if (direction === "up") newY -= step;
+      if (direction === "down") newY += step;
+      if (direction === "left") newX -= step;
+      if (direction === "right") newX += step;
+
+      newX = Math.max(1, Math.min(92, newX));
+      newY = Math.max(1, Math.min(86, newY));
+
+      bunnyX = newX;
+      bunnyY = newY;
+
+      updateBunny();
+    }
+
+    document.querySelectorAll("[data-direction]").forEach(button => {
+      button.addEventListener("click", () => {
+        move(button.dataset.direction);
+      });
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowUp") move("up");
+      if (event.key === "ArrowDown") move("down");
+      if (event.key === "ArrowLeft") move("left");
+      if (event.key === "ArrowRight") move("right");
+    });
+
+    updateBunny();
+  </script>
+
 </body>
 </html>
