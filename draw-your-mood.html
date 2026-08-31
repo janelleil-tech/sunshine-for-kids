@@ -2,46 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Draw Your Mood Today! | Sunshine for Kids</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draw Your Mood | Sunshine for Kids</title>
   <link rel="stylesheet" href="../style.css">
 </head>
+
 <body class="activity-body">
+
   <main class="activity-page">
+
     <a class="back" href="../category-create.html">← Back to activities</a>
 
     <div class="activity-header">
-      <h1>☀️ Draw Your Mood Today!</h1>
+      <h1>☀️ Draw Your Mood!</h1>
       <p>Draw anything that shows how you're feeling today.</p>
     </div>
 
-    <div class="paper">
-      <div class="activity-prompt">
-        <h2>How are you feeling today?</h2>
-        <p>Use the space below to draw, doodle, or color!</p>
-      </div>
-
-      <canvas id="drawingCanvas" aria-label="Drawing area"></canvas>
+    <div class="drawing-area">
+      <canvas id="drawingCanvas"></canvas>
     </div>
 
     <div class="drawing-tools">
-      <label>Color <input id="colorPicker" type="color" value="#F28C63"></label>
-      <label>Size
-        <select id="brushSize">
-          <option value="4">Small</option>
-          <option value="8" selected>Medium</option>
-          <option value="16">Large</option>
-        </select>
-      </label>
-      <button id="undo">↩ Undo</button>
+
+      <button class="color-button" data-color="#F28C63" style="background:#F28C63;"></button>
+      <button class="color-button" data-color="#F6B5B5" style="background:#F6B5B5;"></button>
+      <button class="color-button" data-color="#FFD96A" style="background:#FFD96A;"></button>
+      <button class="color-button" data-color="#A8D5BA" style="background:#A8D5BA;"></button>
+      <button class="color-button" data-color="#8EC5E8" style="background:#8EC5E8;"></button>
+      <button class="color-button" data-color="#B9A7E0" style="background:#B9A7E0;"></button>
+      <button class="color-button" data-color="#5B3A32" style="background:#5B3A32;"></button>
+
+      <button id="eraser">⌫ Eraser</button>
       <button id="clear">🗑 Clear</button>
+
     </div>
 
-    <p class="privacy-note">
-      Your drawing stays on this page and is not uploaded or shared by this activity.
-    </p>
   </main>
 
   <script src="../drawing.js"></script>
+
 </body>
 </html>
