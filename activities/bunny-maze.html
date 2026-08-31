@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -50,13 +51,6 @@
       box-shadow: var(--shadow);
     }
 
-    /*
-      The maze uses a 15 x 11 grid.
-      Each cell is either:
-      0 = open
-      1 = wall
-    */
-
     .maze-board {
       display: grid;
       grid-template-columns: repeat(15, 1fr);
@@ -78,14 +72,16 @@
     }
 
     .wall {
-      background: #F49A6A;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.25) 0 2px, transparent 3px),
+        #F49A6A;
       border-radius: 5px;
       box-shadow: inset 0 -2px 0 rgba(91, 58, 50, .12);
     }
 
     .open {
       background:
-        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .55) 0 2px, transparent 3px),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.55) 0 2px, transparent 3px),
         #FFF9EC;
     }
 
@@ -105,20 +101,20 @@
     }
 
     .bunny {
-      z-index: 20;
+      z-index: 30;
     }
 
     .carrot {
-      z-index: 15;
+      z-index: 20;
     }
 
     .carrot.collected {
-      opacity: .2;
-      transform: scale(.75);
+      opacity: 0;
+      transform: scale(.5);
     }
 
     .home {
-      z-index: 12;
+      z-index: 15;
     }
 
     .controls {
@@ -182,91 +178,91 @@
       }
     }
   </style>
+
 </head>
 
 <body>
 
   <main class="activity-page maze-page">
 
-    <a class="back" href="../category-mazes.html">← Back to Mazes</a>
+```
+<!-- FIXED HOME/BACK LINK -->
+<a class="back" href="/sunshine-for-kids/category-mazes.html">
+  ← Back to Mazes
+</a>
 
-    <h1>🐰 Help Bunny Find Home!</h1>
+<h1>🐰 Help Bunny Find Home!</h1>
 
-    <p class="instructions">
-      🥕 Collect all 5 carrots, then help Bunny find the way home!
-    </p>
+<p class="instructions">
+  🥕 Collect all 5 carrots, then help Bunny find the way home!
+</p>
 
-    <div class="maze-info">
+<div class="maze-info">
 
-      <div class="carrot-count">
-        🥕 Carrots: <span id="carrotCount">0</span>/5
-      </div>
+  <div class="carrot-count">
+    🥕 Carrots: <span id="carrotCount">0</span>/5
+  </div>
 
-      <div class="maze-message" id="message">
-        Find all the carrots!
-      </div>
+  <div class="maze-message" id="message">
+    Find all the carrots!
+  </div>
 
-    </div>
+</div>
 
-    <div class="maze-wrapper">
+<div class="maze-wrapper">
 
-      <div class="maze-board" id="mazeBoard">
+  <div class="maze-board" id="mazeBoard">
 
-        <!-- BUNNY -->
-        <div class="bunny" id="bunny">🐰</div>
+    <div class="bunny" id="bunny">🐰</div>
 
-        <!-- HOME -->
-        <div class="home" id="home">🏠</div>
+    <div class="home" id="home">🏠</div>
 
-        <!-- CARROTS -->
-        <div class="carrot" id="carrot1">🥕</div>
-        <div class="carrot" id="carrot2">🥕</div>
-        <div class="carrot" id="carrot3">🥕</div>
-        <div class="carrot" id="carrot4">🥕</div>
-        <div class="carrot" id="carrot5">🥕</div>
+    <div class="carrot" id="carrot1">🥕</div>
+    <div class="carrot" id="carrot2">🥕</div>
+    <div class="carrot" id="carrot3">🥕</div>
+    <div class="carrot" id="carrot4">🥕</div>
+    <div class="carrot" id="carrot5">🥕</div>
 
-      </div>
+  </div>
 
-    </div>
+</div>
 
-    <!-- ARROW BUTTONS -->
-    <div class="controls" aria-label="Bunny movement controls">
+<div class="controls" aria-label="Bunny movement controls">
 
-      <button class="up" data-direction="up" aria-label="Move up">
-        ⬆️
-      </button>
+  <button class="up" data-direction="up" aria-label="Move up">
+    ⬆️
+  </button>
 
-      <button class="left" data-direction="left" aria-label="Move left">
-        ⬅️
-      </button>
+  <button class="left" data-direction="left" aria-label="Move left">
+    ⬅️
+  </button>
 
-      <button class="down" data-direction="down" aria-label="Move down">
-        ⬇️
-      </button>
+  <button class="down" data-direction="down" aria-label="Move down">
+    ⬇️
+  </button>
 
-      <button class="right" data-direction="right" aria-label="Move right">
-        ➡️
-      </button>
+  <button class="right" data-direction="right" aria-label="Move right">
+    ➡️
+  </button>
 
-    </div>
+</div>
 
-    <p class="maze-note">
-      You can also use the arrow keys on a computer! 💛
-    </p>
+<p class="maze-note">
+  You can also use the arrow keys on a computer! 💛
+</p>
+```
 
   </main>
-
 
   <script>
 
     /*
       15 columns x 11 rows
 
-      # = wall
-      . = open path
+      # = WALL
+      . = OPEN PATH
 
-      The maze is designed so Bunny can only travel
-      through the open spaces.
+      Bunny is only allowed to move onto "." cells.
     */
 
     const maze = [
@@ -304,16 +300,17 @@
     const message = document.getElementById("message");
 
     /*
-      Bunny starts here.
+      Bunny's starting position.
     */
     let bunnyRow = 1;
     let bunnyCol = 1;
 
     /*
       Carrot locations.
+      All locations are on open "." spaces.
     */
     const carrotLocations = [
-      { row: 1, col: 4 },
+      { row: 1, col: 3 },
       { row: 3, col: 5 },
       { row: 5, col: 9 },
       { row: 7, col: 5 },
@@ -321,7 +318,7 @@
     ];
 
     /*
-      Home location.
+      Bunny's home.
     */
     const homeLocation = {
       row: 9,
@@ -331,7 +328,9 @@
     let collected = 0;
 
 
-    /* Create the actual maze cells. */
+    /*
+      CREATE MAZE CELLS
+    */
 
     for (let row = 0; row < rows; row++) {
 
@@ -339,10 +338,11 @@
 
         const cell = document.createElement("div");
 
-        cell.className =
-          maze[row][col] === "#"
-            ? "cell wall"
-            : "cell open";
+        if (maze[row][col] === "#") {
+          cell.className = "cell wall";
+        } else {
+          cell.className = "cell open";
+        }
 
         board.appendChild(cell);
 
@@ -351,13 +351,25 @@
     }
 
 
+    /*
+      POSITION AN OBJECT
+    */
+
     function positionItem(item, row, col) {
 
-      item.style.left = (col * (100 / cols)) + "%";
-      item.style.top = (row * (100 / rows)) + "%";
+      item.style.left =
+        (col * (100 / cols)) + "%";
+
+      item.style.top =
+        (row * (100 / rows)) + "%";
 
     }
 
+
+    /*
+      PUT BUNNY, HOME AND CARROTS
+      INTO THEIR STARTING POSITIONS
+    */
 
     function placeObjects() {
 
@@ -386,6 +398,10 @@
     }
 
 
+    /*
+      COLLECT CARROTS
+    */
+
     function collectCarrots() {
 
       carrots.forEach((carrot, index) => {
@@ -394,7 +410,8 @@
           return;
         }
 
-        const location = carrotLocations[index];
+        const location =
+          carrotLocations[index];
 
         if (
           bunnyRow === location.row &&
@@ -405,7 +422,8 @@
 
           collected++;
 
-          carrotCount.textContent = collected;
+          carrotCount.textContent =
+            collected;
 
           if (collected < 5) {
 
@@ -425,6 +443,10 @@
 
     }
 
+
+    /*
+      CHECK WHETHER BUNNY REACHED HOME
+    */
 
     function checkHome() {
 
@@ -450,10 +472,15 @@
     }
 
 
+    /*
+      MOVE BUNNY
+    */
+
     function move(direction) {
 
       let newRow = bunnyRow;
       let newCol = bunnyCol;
+
 
       if (direction === "up") {
         newRow--;
@@ -473,89 +500,125 @@
 
 
       /*
-        THIS is the important part.
+        IMPORTANT:
 
-        Bunny can only move if the destination
-        is an open "." cell.
+        Bunny can ONLY move when:
 
-        If it's "#", Bunny stays where they are.
+        1. The position is inside the maze.
+        2. The destination is ".".
+
+        "#" means WALL.
+
+        Therefore Bunny CANNOT move through
+        the orange walls.
       */
 
-      if (
+      const insideMaze =
         newRow >= 0 &&
         newRow < rows &&
         newCol >= 0 &&
-        newCol < cols &&
-        maze[newRow][newCol] === "."
-      ) {
+        newCol < cols;
 
-        bunnyRow = newRow;
-        bunnyCol = newCol;
-
-        positionItem(
-          bunny,
-          bunnyRow,
-          bunnyCol
-        );
-
-        collectCarrots();
-        checkHome();
-
+      if (!insideMaze) {
+        return;
       }
+
+
+      const destination =
+        maze[newRow][newCol];
+
+
+      if (destination !== ".") {
+        return;
+      }
+
+
+      /*
+        The move is allowed.
+      */
+
+      bunnyRow = newRow;
+      bunnyCol = newCol;
+
+
+      positionItem(
+        bunny,
+        bunnyRow,
+        bunnyCol
+      );
+
+
+      collectCarrots();
+      checkHome();
 
     }
 
 
-    /* On-screen arrow buttons */
+    /*
+      ARROW BUTTONS
+    */
 
     document
       .querySelectorAll("[data-direction]")
       .forEach(button => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener(
+          "click",
+          () => {
 
-          move(button.dataset.direction);
+            move(
+              button.dataset.direction
+            );
 
-        });
+          }
+        );
 
       });
 
 
-    /* Keyboard arrows */
+    /*
+      COMPUTER KEYBOARD ARROWS
+    */
 
-    document.addEventListener("keydown", event => {
+    document.addEventListener(
+      "keydown",
+      event => {
 
-      if (
-        event.key === "ArrowUp" ||
-        event.key === "ArrowDown" ||
-        event.key === "ArrowLeft" ||
-        event.key === "ArrowRight"
-      ) {
+        if (
+          event.key === "ArrowUp" ||
+          event.key === "ArrowDown" ||
+          event.key === "ArrowLeft" ||
+          event.key === "ArrowRight"
+        ) {
 
-        event.preventDefault();
+          event.preventDefault();
+
+        }
+
+
+        if (event.key === "ArrowUp") {
+          move("up");
+        }
+
+        if (event.key === "ArrowDown") {
+          move("down");
+        }
+
+        if (event.key === "ArrowLeft") {
+          move("left");
+        }
+
+        if (event.key === "ArrowRight") {
+          move("right");
+        }
 
       }
-
-      if (event.key === "ArrowUp") {
-        move("up");
-      }
-
-      if (event.key === "ArrowDown") {
-        move("down");
-      }
-
-      if (event.key === "ArrowLeft") {
-        move("left");
-      }
-
-      if (event.key === "ArrowRight") {
-        move("right");
-      }
-
-    });
+    );
 
 
-    /* Put everything in its starting position. */
+    /*
+      START THE MAZE
+    */
 
     placeObjects();
 
