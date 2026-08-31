@@ -32,7 +32,7 @@ a { color: inherit; text-decoration: none; }
 
 .logo {
   display: block;
-  width: min(260px, 62vw);
+  width: min(500px, 85vw);
   height: auto;
   margin: 0 auto -10px;
   border-radius: 50%;
